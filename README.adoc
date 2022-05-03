@@ -1,0 +1,29 @@
+= packer-alpine-booster
+
+Packer tempalte to build a vanilla Alpine QEMU image with Booster for
+testing/troubleshooting.
+
+[source]
+----
+# Download Packer v1.8.0
+curl https://releases.hashicorp.com/packer/1.8.0/packer_1.8.0_linux_amd64.zip
+unzip packer_1.8.0_linux_amd64.zip
+
+# Build QEMU images
+CHECKPOINT_DISABLE=1 ./packer build .
+
+# Run built images
+# "Extended" ISO
+qemu-system-x86_64 \
+  -enable-kvm \
+  -drive file=out-ext/ext \
+  -bios /usr/share/ovmf/OVMF.fd \
+  -m 1G 
+
+# "Virt" ISO
+qemu-system-x86_64 \
+  -enable-kvm \
+  -drive file=out-virt/virt \
+  -bios /usr/share/ovmf/OVMF.fd \
+  -m 1G 
+----

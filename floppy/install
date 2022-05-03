@@ -1,0 +1,5 @@
+#!/bin/sh
+
+readonly PASSWD="alpine"
+
+printf "%s\n%s\ny\n" "${PASSWD}" "${PASSWD}" | setup-alpine -f /media/floppy/answers

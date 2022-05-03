@@ -1,0 +1,38 @@
+# Example answer file
+
+# Use US layout with US variant
+KEYMAPOPTS="us us"
+
+# Set hostname to alpine-booster
+HOSTNAMEOPTS="-n alpine-booster"
+
+# Contents of /etc/network/interfaces
+# Set eth0 to obtain IP via DHCP
+INTERFACESOPTS="auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet dhcp
+    hostname alpine-booster
+"
+
+# Set timezone to UTC
+TIMEZONEOPTS="-z UTC"
+
+# Do not use a proxy
+PROXYOPTS="none"
+
+# Set repos
+APKREPOSOPTS="https://dl-cdn.alpinelinux.org/alpine/edge/main
+https://dl-cdn.alpinelinux.org/alpine/edge/community
+https://dl-cdn.alpinelinux.org/alpine/edge/testing"
+
+# Do not install OpenSSH
+SSHDOPTS="-c none"
+#SSHDOPTS="-c openssh"
+
+# Do not install NTP
+NTPOPTS="-c none"
+
+# Use /dev/vda as a data disk; do not use swap space
+DISKOPTS="-m sys -s 0 /dev/vda"

@@ -1,0 +1,35 @@
+#!/bin/sh
+
+ALPINE_KERNEL="$(uname -r | sed -nE 's/.*-(\w+)/\1/p')"
+ROOT_UUID="$(blkid /dev/vda2 | sed -nE 's/.* UUID="([a-z0-9-]+).*/\1/p')"
+
+printf "Root UUID is ${ROOT_UUID}, Kernel ${ALPINE_KERNEL}\n"
+
+cat << EOF >> /mnt/etc/grub.d/40_custom
+
+menuentry 'Alpine Linux edge, with Booster ${ALPINE_KERNEL}' --class gnu-linux --class gnu --class os \$menuentry_id_option 'gnulinux-lts-advanced-${ROOT_UUID}' {
+	load_video
+	set gfxpayload=keep
+	insmod gzio
+	insmod part_gpt
+	insmod ext2
+	search --no-floppy --fs-uuid --set=root ${ROOT_UUID}
+	echo 'Loading Linux ${ALPINE_KERNEL} ...'
+	linux /boot/vmlinuz-${ALPINE_KERNEL} root=UUID=${ROOT_UUID} rw modules=sd-mod,usb-storage,ext4 rootfstype=ext4 booster.debug
+	echo 'Loading booster ramdisk ...'
+	initrd /boot/booster-${ALPINE_KERNEL}
+}
+
+menuentry 'Alpine Linux edge, with Booster edge' --class gnu-linux --class gnu --class os \$menuentry_id_option 'gnulinux-lts-advanced-${ROOT_UUID}' {
+	load_video
+	set gfxpayload=keep
+	insmod gzio
+	insmod part_gpt
+	insmod ext2
+	search --no-floppy --fs-uuid --set=root ${ROOT_UUID}
+	echo 'Loading Linux lts ...'
+	linux /boot/vmlinuz-edge root=UUID=${ROOT_UUID} rw modules=sd-mod,usb-storage,ext4 rootfstype=ext4 booster.debug
+	echo 'Loading booster ramdisk ...'
+	initrd /boot/booster-edge
+}
+EOF
